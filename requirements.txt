@@ -1,3 +1,5 @@
 pillow
 imagehash
 streamlit
+numpy
+opencv-python-headless
