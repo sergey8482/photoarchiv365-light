@@ -4,7 +4,7 @@ import streamlit as st
 # подключаем backend-пакеты
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from backend.dedupe import find_duplicate_groups
-from backend.archive import get_photos_by_date
+from backend.archive import get_photos_by_date, organize_photos, MONTH_NAMES
 
 st.set_page_config(page_title="Фотоархив365 Light")
 st.title("Фотоархив365 Light")
@@ -66,14 +66,17 @@ if st.session_state.get('dupe'):
 # Секция архива по датам
 if st.session_state.get('archive'):
     st.header("Архив по дате")
-    archive = st.session_state.archive
-    for year in sorted(archive.keys(), reverse=True):
-        st.subheader(year)
-        for month in sorted(archive[year].keys()):
-            st.write(f"**Месяц {month}**")
-            photos = archive[year][month]
-            cols = st.columns(4)
-            for i, path in enumerate(photos):
-                with cols[i % 4]:
-                    st.image(path, width=150)
-                    st.caption(os.path.basename(path)) 
+    if st.button("📁 Сгруппировать файлы по папкам", help="Создать папки Год/Месяц и переместить туда фото"):
+        organize_photos(folder)
+        st.success("Файлы перемещены в папки Год/Месяц")
+    for year in sorted(st.session_state.archive.keys(), reverse=True):
+        with st.expander(f"{year}"):
+            for month_num in sorted(st.session_state.archive[year].keys()):
+                month_name = MONTH_NAMES.get(month_num, month_num)
+                st.subheader(month_name)
+                photos = st.session_state.archive[year][month_num]
+                cols = st.columns(4)
+                for i, path in enumerate(photos):
+                    with cols[i % 4]:
+                        st.image(path, width=150)
+                        st.caption(os.path.basename(path)) 
