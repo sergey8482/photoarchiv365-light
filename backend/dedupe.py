@@ -4,6 +4,12 @@ import json
 from PIL import Image
 import imagehash
 
+# Добавили все основные форматы изображений
+SUPPORTED_EXT = (
+    '.jpg', '.jpeg', '.png', '.nef', '.raw', '.cr2', '.arw', '.dng',
+    '.tif', '.tiff', '.bmp', '.gif', '.heic'
+)
+
 def find_duplicate_groups(path, threshold=0):
     # Собираем список (путь, hash)
     file_hashes = []
@@ -13,7 +19,7 @@ def find_duplicate_groups(path, threshold=0):
             if fname.startswith('._'): # Игнорируем файлы метаданных macOS
                 print(f"DEBUG: Игнорируем метафайл: {os.path.join(root, fname)}")
                 continue
-            if fname.lower().endswith(('.jpg', '.jpeg', '.png', '.nef')):
+            if fname.lower().endswith(SUPPORTED_EXT):
                 full = os.path.join(root, fname)
                 print(f"DEBUG: найден файл {full}")
                 try:
