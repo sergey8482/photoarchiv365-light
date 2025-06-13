@@ -18,6 +18,8 @@ def detect_junk(path, blur_thresh=100.0, dark_thresh=50):
     junk = {}
     for root, _, files in os.walk(path):
         for fname in files:
+            if fname.startswith('._'): # Игнорируем файлы метаданных macOS
+                continue
             if fname.lower().endswith(SUPPORTED_EXT):
                 full = os.path.join(root, fname)
                 # читаем как grayscale через OpenCV
