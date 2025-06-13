@@ -5,32 +5,27 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from backend.dedupe import find_duplicate_groups
 from backend.archive import get_photos_by_date, organize_photos, MONTH_NAMES
 
+import pyperclip
+
 st.set_page_config(page_title="Фотоархив365 Light")
 st.title("Фотоархив365 Light")
 
-# Инициализация текущей папки
+# Инициализируем и отображаем текущую папку
 if 'folder' not in st.session_state:
     st.session_state.folder = os.getcwd()
 
-# Панель выбора папки (интерактивный браузер)
-st.sidebar.header("Навигация по папкам")
-current = st.sidebar.text_input("Текущая папка", st.session_state.folder)
-st.sidebar.write("Подпапки:")
-try:
-    subdirs = [d for d in os.listdir(current) if os.path.isdir(os.path.join(current, d))]
-except Exception:
-    subdirs = []
-choice = st.sidebar.selectbox("Перейти в", [".."] + subdirs)
-if st.sidebar.button("Жми перейти"):
-    if choice == "..":
-        new_folder = os.path.dirname(current)
+st.write("**Текущая папка:**")
+st.code(st.session_state.folder, language='bash')
+
+# Кнопка вставки пути из буфера
+if st.button("📋 Вставить путь из буфера"):
+    clip = pyperclip.paste().strip().strip('"').strip("'")
+    if os.path.isdir(clip):
+        st.session_state.folder = clip
     else:
-        new_folder = os.path.join(current, choice)
-    st.session_state.folder = new_folder
+        st.error(f"В буфере не папка: {clip}")
 
-st.sidebar.write(f"**Выбрано:** {st.session_state.folder}")
-
-# Основная кнопка анализа
+# Кнопка анализа
 if st.button("🔍 Анализ"):
     folder = st.session_state.folder
     st.session_state.dupe = find_duplicate_groups(folder, threshold=0)
@@ -55,7 +50,6 @@ if st.session_state.get('dupe'):
                     os.remove(p)
                     removed += 1
                 st.success(f"Удалено {removed} файлов")
-                # обновляем state
                 key = list(st.session_state.dupe.keys())[i-1]
                 st.session_state.dupe.pop(key)
 
