@@ -9,6 +9,9 @@ def scan_folder(path):
     print(f"DEBUG: начинаем сканирование {path}")
     for root, _, files in os.walk(path):
         for fname in files:
+            if fname.startswith('._'): # Игнорируем файлы метаданных macOS
+                print(f"DEBUG: Игнорируем метафайл: {os.path.join(root, fname)}")
+                continue
             if fname.lower().endswith(('.jpg','.jpeg','.png')):
                 full = os.path.join(root, fname)
                 print(f"DEBUG: найден файл {full}")
