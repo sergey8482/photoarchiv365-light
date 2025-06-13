@@ -1,5 +1,7 @@
+streamlit
 pillow
 imagehash
-streamlit
+pyperclip
+PySimpleGUI
 numpy
 opencv-python-headless
