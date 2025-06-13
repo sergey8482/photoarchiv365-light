@@ -13,7 +13,7 @@ def find_duplicate_groups(path, threshold=0):
             if fname.startswith('._'): # Игнорируем файлы метаданных macOS
                 print(f"DEBUG: Игнорируем метафайл: {os.path.join(root, fname)}")
                 continue
-            if fname.lower().endswith(('.jpg', '.jpeg', '.png')):
+            if fname.lower().endswith(('.jpg', '.jpeg', '.png', '.nef')):
                 full = os.path.join(root, fname)
                 print(f"DEBUG: найден файл {full}")
                 try:
