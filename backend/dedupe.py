@@ -7,15 +7,21 @@ import imagehash
 def find_duplicate_groups(path, threshold=0):
     # Собираем список (путь, hash)
     file_hashes = []
+    print(f"DEBUG: начинаем сканирование {path}")
     for root, _, files in os.walk(path):
         for fname in files:
+            if fname.startswith('._'): # Игнорируем файлы метаданных macOS
+                print(f"DEBUG: Игнорируем метафайл: {os.path.join(root, fname)}")
+                continue
             if fname.lower().endswith(('.jpg', '.jpeg', '.png')):
                 full = os.path.join(root, fname)
+                print(f"DEBUG: найден файл {full}")
                 try:
                     h = imagehash.average_hash(Image.open(full))
+                    print(f"DEBUG: Хеш для {full}: {h}") # Добавлено отладочное сообщение для хеша
                     file_hashes.append((full, h))
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"DEBUG: ошибка при хэшировании {full}: {e}") # Подробное логирование ошибок
 
     groups = []
     visited = set()
